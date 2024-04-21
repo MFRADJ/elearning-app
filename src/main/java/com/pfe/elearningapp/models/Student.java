@@ -7,12 +7,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "students")
-public class student extends user {
+public class Student extends User {
     @Column(nullable = true)
     private String studyLevel;
 
     @ManyToMany(mappedBy = "students", cascade = CascadeType.ALL)
-    private Set<course> enrolledCourses = new HashSet<>();
+    private Set<Course> enrolledCours = new HashSet<>();
 
 
 }

@@ -16,13 +16,13 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class professor extends user {
+public class Professor extends User {
 
     @Column(nullable = false)
     private String department;
 
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<course> courses = new HashSet<>();
+    private Set<Course> cours = new HashSet<>();
 
 
 }
