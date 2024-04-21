@@ -14,5 +14,5 @@ public class student extends user {
     @ManyToMany(mappedBy = "students", cascade = CascadeType.ALL)
     private Set<course> enrolledCourses = new HashSet<>();
 
-    // Standard getters and setters...
+
 }

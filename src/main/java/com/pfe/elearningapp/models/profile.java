@@ -2,9 +2,17 @@ package com.pfe.elearningapp.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "profiles")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class profile {
     @Id
     private Long id;
@@ -14,14 +22,18 @@ public class profile {
     @JoinColumn(name = "user_id")
     private user user;
 
-    @NotBlank
+    @Column(nullable = false)
     private String firstName;
 
-    @NotBlank
+    @Column(nullable = false)
     private String lastName;
 
-    @Lob
-    private String bio;
+    @Column(nullable = true)
+    private String phoneNumber;
 
-    // Standard getters and setters...
+    @Lob
+    private String biography;
+
+    @Lob
+    private byte[] profileImage;
 }
