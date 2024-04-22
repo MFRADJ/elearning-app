@@ -6,14 +6,25 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Date;
+import java.util.Set;
+import java.time.LocalDateTime;
+
+import com.pfe.elearningapp.enmus.UserStatus;
+import com.pfe.elearningapp.enmus.UserRole;
+
+import static org.springframework.security.crypto.encrypt.Encryptors.*;
+
 
 @Entity
 @Table(name = "users")
@@ -38,27 +49,70 @@ public abstract class User {
     @Size(min = 8, max = 100) // Ensure password length is adequate
     private String password;
 
-    @Column(name = "is_active", nullable = false)
-    private boolean isActive = true;  // For logical deletion
+    /** password encoder */
+    @Autowired
+    private transient PasswordEncoder passwordEncoder;
+
+    /**
+     * Sets the password after encoding it.
+     * @param password the raw password to encode and set
+     */
+    public void setPassword(String password) {
+        this.password = passwordEncoder.encode(password);
+    }
+
+    /* Tow facotr encrypter with specifec getters and setters */
+
+    private static final String ENCRYPT_KEY = "secret-key";
+    private static final String SALT = "salt";
 
     @Column(nullable = true)
-    private String twoFactorSecret;
+    private String encryptedTwoFactorSecret;
 
     @Column(nullable = false)
     private boolean isTwoFactorEnabled = false;
 
     @Column(nullable = false)
-    private boolean isAccountNonLocked = true;
-
-    @Column(nullable = false)
     private int failedLoginAttempts = 0;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastLoginDate;
+    @Column(nullable = false)
+    private LocalDateTime lastLoginDate;
 
     @Column(nullable = true)
-    private String apiKey;
+    private String encryptedApiKey;
 
+    @Transient
+    private TextEncryptor encryptor = Encryptors.delux(ENCRYPT_KEY, SALT);
+
+    public void setTwoFactorSecret(String twoFactorSecret) {
+        this.encryptedTwoFactorSecret = encryptor.encrypt(twoFactorSecret);
+    }
+
+    public String getTwoFactorSecret() {
+        return encryptor.decrypt(this.encryptedTwoFactorSecret);
+    }
+
+    public void setApiKey(String apiKey) {
+        this.encryptedApiKey = encryptor.encrypt(apiKey);
+    }
+
+    public String getApiKey() {
+        return encryptor.decrypt(this.encryptedApiKey);
+    }
+
+
+    /* user roles and Status */
+    @ElementCollection(targetClass = UserRole.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Set<UserRole> roles;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus status = UserStatus.ACTIVE;
+
+    /* preference user ex. language ..*/
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "key")
@@ -67,19 +121,13 @@ public abstract class User {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
     @LastModifiedDate
-    private Date lastModifiedDate;
+    private LocalDateTime lastModifiedDate;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     private Profile profile;
 
-    /**
-     * Sets the password after encoding it.
-     * @param password the raw password to encode and set
-     */
-    public void setPassword(String password) {
-        this.password = new BCryptPasswordEncoder().encode(password);
-    }
+
 }

@@ -22,7 +22,7 @@ public class Professor extends User {
     private String department;
 
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Course> cours = new HashSet<>();
+    private Set<Course> course = new HashSet<>();
 
 
 }

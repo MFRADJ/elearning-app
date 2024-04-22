@@ -11,8 +11,10 @@ public class Student extends User {
     @Column(nullable = true)
     private String studyLevel;
 
-    @ManyToMany(mappedBy = "students", cascade = CascadeType.ALL)
-    private Set<Course> enrolledCours = new HashSet<>();
-
+//    @ManyToMany(mappedBy = "students", cascade = CascadeType.ALL)
+//      private Set<Course> enrolledCours = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
 
 }
