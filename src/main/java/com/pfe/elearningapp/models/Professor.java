@@ -6,23 +6,84 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "professors")
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
-
 public class Professor extends User {
+    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProfessionalExperience> professionalExperiences ;
 
-    @Column(nullable = false)
-    private String department;
+    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EducationDetails> educationalBackground ;
 
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Course> course = new HashSet<>();
+    public Professor() {
+        this.professionalExperiences = new ArrayList<>();
+        this.educationalBackground = new ArrayList<>();
+    }
+
+    public void addProfessionalExperience(ProfessionalExperience experience) {
+        professionalExperiences.add(experience);
+        experience.setProfessor(this);
+    }
+
+    public void addEducationDetail(EducationDetails education) {
+        educationalBackground.add(education);
+        education.setProfessor(this);
+    }
+
+    // Classe interne non statique pour ProfessionalExperience
+    @Entity
+    @Table(name = "professional_experiences")
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class ProfessionalExperience {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "professor_id", nullable = false)
+        private Professor professor = Professor.this;
+
+        private String jobTitle;
+        private String company;
+        private LocalDateTime startDate;
+        private LocalDateTime endDate;
+        private String description;
 
 
+    }
+
+    // Classe interne non statique pour EducationDetails
+    @Entity
+    @Table(name = "education_details")
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class EducationDetails {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "professor_id", nullable = false)
+        private Professor professor = Professor.this;
+
+        private String degree;
+        private String fieldOfStudy;
+        private String schoolName;
+        private LocalDateTime startDate;
+        private LocalDateTime endDate;
+
+        // Getters and Setters
+    }
 }
