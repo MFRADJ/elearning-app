@@ -24,7 +24,7 @@ import java.util.Set;
 public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_profile;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
