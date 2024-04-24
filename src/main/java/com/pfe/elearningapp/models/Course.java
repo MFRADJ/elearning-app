@@ -12,6 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Table(name = "courses")
@@ -42,5 +43,8 @@ public class Course {
 
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Enrollment> enrollments;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Chapter> chapters;  // Liste des chapitres du cours
 
 }

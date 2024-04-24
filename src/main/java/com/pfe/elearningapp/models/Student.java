@@ -15,11 +15,12 @@ import jakarta.validation.constraints.NotEmpty;
 @AllArgsConstructor
 public class Student extends User {
 
-    @Column(nullable = true)
+
+    @Column()
     @NotEmpty(message = "Major cannot be empty") // Validation pour s'assurer que le champ n'est pas vide
     private String major; // La spécialisation de l'étudiant, par exemple "Computer Science"
 
-    @Column(nullable = true)
+    @Column()
     private String studentStatus;  // Statut de l'étudiant, ex: "Full-time", "Part-time"
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
