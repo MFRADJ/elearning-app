@@ -63,8 +63,8 @@ public abstract class User {
 
     /* Tow facotr encrypter with specifec getters and setters */
 
-    private static final String ENCRYPT_KEY = "secret-key";
-    private static final String SALT = "salt";
+    private static final String ENCRYPT_KEY = "aabb09182736ccdd";
+    private static final String SALT = "f2b56b8f04b24dfb";
 
     @Column(nullable = true)
     private String encryptedTwoFactorSecret;

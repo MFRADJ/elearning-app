@@ -13,12 +13,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@NamedQueries({
-        @NamedQuery(name = "Message.findBySender",
-                query = "SELECT m FROM Message m WHERE m.sender.id = :senderId"),
-        @NamedQuery(name = "Message.findByReceiver",
-                query = "SELECT m FROM Message m WHERE m.receiver.id = :receiverId")
-})
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,13 +22,9 @@ public class Message {
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;  // L'expéditeur du message
 
-    @ManyToMany
-    @JoinTable(
-            name = "message_receivers",
-            joinColumns = @JoinColumn(name = "message_id"),
-            inverseJoinColumns = @JoinColumn(name = "receiver_id")
-    )
-    private List<User> receivers;  // Les destinataires du message, permettant les discussions de groupe
+    @ManyToOne
+    @JoinColumn(name = "message_receivers", nullable = false)
+    private User receivers;  // Les destinataires du message, permettant les discussions de groupe
 
     @Column(nullable = false)
     private String content;  // Le contenu du message
