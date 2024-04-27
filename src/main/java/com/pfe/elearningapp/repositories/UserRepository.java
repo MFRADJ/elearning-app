@@ -1,4 +1,7 @@
 package com.pfe.elearningapp.repositories;
 
-public interface UserRepository {
+import com.pfe.elearningapp.models.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, Long> {
 }

@@ -1,4 +1,7 @@
 package com.pfe.elearningapp.repositories;
 
-public interface ParagraphRepository {
+import com.pfe.elearningapp.models.Paragraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ParagraphRepository extends JpaRepository<Paragraph, Long> {
 }

@@ -1,4 +1,7 @@
 package com.pfe.elearningapp.repositories;
 
-public interface ProfileRepository {
+import com.pfe.elearningapp.models.Profile;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProfileRepository extends JpaRepository <Profile, Long> {
 }
